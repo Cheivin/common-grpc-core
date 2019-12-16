@@ -20,7 +20,7 @@
                 <repository>
                     <id>github</id>
                     <name>common-grpc-core</name>
-                    <url>https://maven.pkg.github.com/cheivin/common-grpc-main</url>
+                    <url>https://maven.pkg.github.com/cheivin/common-grpc-core</url>
                 </repository>
             </repositories>
         </profile>
@@ -30,7 +30,7 @@
         <repository>
             <id>github</id>
             <name>common-grpc-core</name>
-            <url>https://maven.pkg.github.com/cheivin/common-grpc-main</url>
+            <url>https://maven.pkg.github.com/cheivin/common-grpc-core</url>
         </repository>
     </distributionManagement>
 

@@ -1,6 +1,5 @@
 package top.cheivin.grpc.util;
 
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
@@ -24,7 +23,6 @@ public class NetWorkAddressUtils {
                     InetAddress nextElement = addresss.nextElement();
                     String hostAddress = nextElement.getHostAddress();
                     String name = networkInterface.getName();
-                    if (nextElement instanceof Inet4Address) {
                     if (name.contains("docker")) {
                         continue;
                     }
@@ -35,7 +33,6 @@ public class NetWorkAddressUtils {
                         continue;
                     }
                     return hostAddress;
-                    }
                 }
             }
         } catch (Exception e) {

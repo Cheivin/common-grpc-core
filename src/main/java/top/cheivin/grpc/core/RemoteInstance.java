@@ -61,12 +61,17 @@ public class RemoteInstance {
         this.channel.shutdown();
     }
 
-    public boolean isAlive() {
-        return channel != null && !channel.isShutdown();
+    public boolean isClosed() {
+        return channel == null || channel.isShutdown();
+    }
+
+    public CommonServiceGrpc.CommonServiceBlockingStub getBlockingStub() {
+        return CommonServiceGrpc
+                .newBlockingStub(ManagedChannelBuilder.forAddress(ip, port).usePlaintext(true).build()).withWaitForReady();
     }
 
     public void connect() {
-        if (!isAlive()) {
+        if (isClosed()) {
             this.channel = ManagedChannelBuilder.forAddress(ip, port).usePlaintext(true).build();
         }
     }

@@ -30,7 +30,7 @@ public class GrpcHandler extends CommonServiceGrpc.CommonServiceImplBase {
             if (instance == null) {
                 response(observer, GrpcResponse.Status.error("Service not registered"));
             } else {
-                response(observer, invoker.invoke(manage.getInstance(request), request));
+                response(observer, invoker.invoke(instance, request));
             }
         } catch (Exception e) {
             response(observer, GrpcResponse.Status.error(e.getMessage()));

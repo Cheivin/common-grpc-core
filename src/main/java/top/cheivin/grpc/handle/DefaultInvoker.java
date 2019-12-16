@@ -1,9 +1,9 @@
 package top.cheivin.grpc.handle;
 
+import lombok.extern.slf4j.Slf4j;
 import top.cheivin.grpc.core.GrpcRequest;
 import top.cheivin.grpc.core.GrpcResponse;
 import top.cheivin.grpc.util.ProtoBufUtils;
-import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

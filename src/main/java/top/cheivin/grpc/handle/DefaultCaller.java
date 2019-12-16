@@ -8,8 +8,6 @@ import top.cheivin.grpc.exception.ChannelException;
 import top.cheivin.grpc.exception.InvokeException;
 import top.cheivin.grpc.util.ProtoBufUtils;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * 远程调用器，用于客户端远程调用服务请求结果
  */
@@ -32,22 +30,12 @@ public class DefaultCaller implements Caller {
 
     public GrpcResponse call(RemoteInstance remoteInstance, GrpcRequest grpcRequest, int retry) throws InvokeException {
         // 检查channel存活
-        if (remoteInstance.isAlive()) {
+        if (remoteInstance.isClosed()) {
             throw new ChannelException("channel is not available");
         }
         // 获取连接
         CommonServiceGrpc.CommonServiceBlockingStub blockingStub = CommonServiceGrpc
-                .newBlockingStub(remoteInstance.getChannel())
-                .withDeadlineAfter(20, TimeUnit.SECONDS);
-        if (blockingStub == null) {
-            log.error("blockingStub is null, server context handle fail,service address:{},serviceName:{},version:{},methodName:{},args:{},error message:{}"
-                    , remoteInstance.getIp() + ":" + remoteInstance.getPort(), grpcRequest.getServiceName(), grpcRequest.getVersion(), grpcRequest.getMethodName(), grpcRequest.getArgs(), "max retry count");
-            if (retry <= 0) {
-                throw new InvokeException("blockingStub is null");
-            }
-            // 获取不到时重新调用
-            return call(remoteInstance, grpcRequest, --retry);
-        }
+                .newBlockingStub(remoteInstance.getChannel()).withWaitForReady();
         try {
             // 远程调用
             byte[] bytes = ProtoBufUtils.serialize(grpcRequest);

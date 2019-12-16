@@ -78,33 +78,38 @@ public class GrpcServer {
             this.grpcServer.serviceInfoManage = serviceManage;
         }
 
-        public void port(int port) {
+        public Builder port(int port) {
             this.port = port;
+            return this;
         }
 
-        public void invoker(Invoker invoker) {
+        public Builder invoker(Invoker invoker) {
             this.invoker = invoker;
+            return this;
         }
 
         /**
          * 发送keepalive ping的时间间隔，单位毫秒
          */
-        public void keepAliveTime(long keepAliveTime) {
+        public Builder keepAliveTime(long keepAliveTime) {
             this.keepAliveTime = keepAliveTime;
+            return this;
         }
 
         /**
          * keepalive ping的发送方等待确认的时间，如果在此时间内未收到确认，它将关闭连接。单位毫秒
          */
-        public void keepAliveTimeout(long keepAliveTimeout) {
+        public Builder keepAliveTimeout(long keepAliveTimeout) {
             this.keepAliveTimeout = keepAliveTimeout;
+            return this;
         }
 
         /**
          * 如果将此通道参数设置为true，则即使没有请求进行，也可以发送keepalive ping
          */
-        public void permitKeepAliveWithoutCalls(boolean permit) {
+        public Builder permitKeepAliveWithoutCalls(boolean permit) {
             this.permit = permit;
+            return this;
         }
 
         public GrpcServer build() {

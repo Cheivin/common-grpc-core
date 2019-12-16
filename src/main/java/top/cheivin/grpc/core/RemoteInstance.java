@@ -56,18 +56,12 @@ public class RemoteInstance {
         return Objects.hash(id);
     }
 
-
     public void close() {
         this.channel.shutdown();
     }
 
     public boolean isClosed() {
         return channel == null || channel.isShutdown();
-    }
-
-    public CommonServiceGrpc.CommonServiceBlockingStub getBlockingStub() {
-        return CommonServiceGrpc
-                .newBlockingStub(ManagedChannelBuilder.forAddress(ip, port).usePlaintext(true).build()).withWaitForReady();
     }
 
     public void connect() {

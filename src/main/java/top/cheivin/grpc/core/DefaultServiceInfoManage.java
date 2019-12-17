@@ -1,11 +1,8 @@
-package top.cheivin.grpc.handle;
+package top.cheivin.grpc.core;
 
-import top.cheivin.grpc.core.GrpcRequest;
-import top.cheivin.grpc.core.ServiceInfo;
-import top.cheivin.grpc.core.ServiceInfoManage;
-import top.cheivin.grpc.exception.InstanceException;
 import lombok.extern.slf4j.Slf4j;
 import top.cheivin.grpc.annotation.GrpcService;
+import top.cheivin.grpc.exception.InstanceException;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,7 +44,8 @@ public class DefaultServiceInfoManage implements ServiceInfoManage {
         addService(ServiceInfo.builder()
                 .clz(clz)
                 .serviceName("".equals(info.service()) ? clz.getSimpleName() : info.service())
-                .version("".equals(info.version()) ? "1.0.0" : info.version())
+                .version(info.version())
+                .weight(info.weight())
                 .alias("".equals(info.alias()) ? clz.getSimpleName() : info.alias())
                 .build());
     }

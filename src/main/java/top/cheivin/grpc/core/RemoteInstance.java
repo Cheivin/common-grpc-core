@@ -57,7 +57,9 @@ public class RemoteInstance {
     }
 
     public void close() {
-        this.channel.shutdown();
+        if (!isClosed()) {
+            this.channel.shutdown();
+        }
     }
 
     public boolean isClosed() {

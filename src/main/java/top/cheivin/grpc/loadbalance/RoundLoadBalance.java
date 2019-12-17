@@ -7,19 +7,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 轮询负载均衡
  */
-public class RoundLoadBalance extends LoadBalance {
+public class RoundLoadBalance extends AbstractLoadBalance {
     private static final int MAX_VAL = 1000000;
     private AtomicInteger inc = new AtomicInteger();
-
-    @Override
-    void add(RemoteInstance instance) {
-        // ignore
-    }
-
-    @Override
-    void remove(RemoteInstance instance) {
-        // ignore
-    }
 
     @Override
     public RemoteInstance choose() {

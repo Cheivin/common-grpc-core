@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 平滑加权轮询负载均衡
  */
-public class WeightRoundLoadBalance extends LoadBalance {
+public class WeightRoundLoadBalance extends AbstractLoadBalance {
     private ConcurrentHashMap<String, Integer[]> curWeightMap = new ConcurrentHashMap<>();
     private AtomicInteger weightSum = new AtomicInteger();
 

@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * hash均衡
  */
-public class HashLoadBalance extends LoadBalance {
+public class HashLoadBalance extends AbstractLoadBalance {
     private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
     private String instanceId;

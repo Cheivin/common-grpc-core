@@ -7,18 +7,8 @@ import java.util.Random;
 /**
  * 随机均衡
  */
-public class RandomLoadBalance extends LoadBalance {
+public class RandomLoadBalance extends AbstractLoadBalance {
     private final Random r = new Random(System.currentTimeMillis());
-
-    @Override
-    void add(RemoteInstance instance) {
-        // ignore
-    }
-
-    @Override
-    void remove(RemoteInstance instance) {
-        // ignore
-    }
 
     @Override
     public RemoteInstance choose() {

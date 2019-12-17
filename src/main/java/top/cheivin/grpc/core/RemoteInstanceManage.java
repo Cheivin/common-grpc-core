@@ -123,7 +123,9 @@ public class RemoteInstanceManage {
          */
         remoteInstanceMap.keySet().removeAll(loadBalance.getIds());
         for (RemoteInstance instance : remoteInstanceMap.values()) {
-            loadBalance.addInstance(instance);
+            if (loadBalance.addInstance(instance)) {
+                instance.connect();
+            }
         }
     }
 

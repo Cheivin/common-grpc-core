@@ -67,7 +67,6 @@ public abstract class AbstractLoadBalance implements LoadBalance {
     public final boolean addInstance(final RemoteInstance instance) {
         if (this.instances.putIfAbsent(instance.getId(), instance) == null) {
             add(instance);
-            instance.connect();
             return true;
         }
         return false;

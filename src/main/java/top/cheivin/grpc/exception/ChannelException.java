@@ -1,5 +1,7 @@
 package top.cheivin.grpc.exception;
 
+import top.cheivin.grpc.core.RemoteInstance;
+
 /**
  * channel异常
  */
@@ -8,7 +10,7 @@ public class ChannelException extends InvokeException {
         super(message);
     }
 
-    public ChannelException(String message, Throwable cause) {
-        super(message, cause);
+    public ChannelException(String message, RemoteInstance remoteInstance) {
+        super(message, remoteInstance, null);
     }
 }

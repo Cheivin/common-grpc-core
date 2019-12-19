@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * gRPC服务端
  */
-@Slf4j
 public class GrpcServer {
     /**
      * gRPC服务端

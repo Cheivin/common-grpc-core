@@ -14,7 +14,6 @@ import java.util.Objects;
  * 远程服务提供者实例
  */
 @Data
-@Slf4j
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

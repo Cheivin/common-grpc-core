@@ -11,7 +11,6 @@ import java.lang.reflect.Method;
 /**
  * 默认反射调用类，仅支持JAVA
  */
-@Slf4j
 public class DefaultInvoker implements Invoker {
 
     @Override
@@ -31,14 +30,7 @@ public class DefaultInvoker implements Invoker {
             Class<?>[] argTypes = ProtoBufUtils.getObjTypes(request.getArgs());
             Method method = instance.getClass().getMethod(request.getMethodName(), argTypes);
             return GrpcResponse.Status.success(method.invoke(instance, request.getArgs()));
-        } catch (IllegalAccessException e) {
-            log.error("IllegalAccessException", e);
-            return GrpcResponse.Status.error(e.getMessage());
-        } catch (NoSuchMethodException e) {
-            log.error("NoSuchMethodException", e);
-            return GrpcResponse.Status.error(e.getMessage());
-        } catch (InvocationTargetException e) {
-            log.error("InvocationTargetException", e);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             return GrpcResponse.Status.error(e.getMessage());
         }
     }

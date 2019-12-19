@@ -49,8 +49,8 @@ public class RemoteInstanceManage {
         if (remoteInstance == null) {
             throw new InstanceException("no instance choose");
         }
-        if (remoteInstance.getChannel().isShutdown()) {
-            throw new ChannelException("channel is shutdown");
+        if (remoteInstance.isClosed()) {
+            throw new ChannelException("channel is closed", remoteInstance);
         }
         return remoteInstance;
     }

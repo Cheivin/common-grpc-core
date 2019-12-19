@@ -12,18 +12,23 @@ import top.cheivin.grpc.handle.DefaultCaller;
 /**
  * gRPC客户端
  */
-@Slf4j
 public class GrpcClient {
     private Discover discover;
     private Caller caller;
+    private int retryCount;
 
     public GrpcClient(Discover discover) {
         this(discover, new DefaultCaller());
     }
 
     public GrpcClient(Discover discover, Caller caller) {
+        this(discover, caller, 1);
+    }
+
+    public GrpcClient(Discover discover, Caller caller, int retryCount) {
         this.discover = discover;
         this.caller = caller;
+        this.retryCount = retryCount;
     }
 
     public void start() throws Exception {
@@ -37,7 +42,7 @@ public class GrpcClient {
     }
 
     public final Object invoke(GrpcRequest request) throws InstanceException, InvokeException {
-        return invoke(request, 1);
+        return invoke(request, retryCount);
     }
 
     public final Object invoke(GrpcRequest request, int retryCount) throws InstanceException, InvokeException {
@@ -46,7 +51,6 @@ public class GrpcClient {
             return caller.call(remoteInstance, request);
         } catch (InvokeException e) {
             // 仅拦截InvokeException，用于重试
-            log.error("invoke error, at time:{}", retryCount, e);
             // 最后一次条用失败则抛出异常
             if (retryCount <= 1) {
                 throw e;

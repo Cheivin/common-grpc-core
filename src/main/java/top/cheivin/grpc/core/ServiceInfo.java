@@ -24,7 +24,7 @@ public class ServiceInfo {
     /**
      * 接口类
      */
-    private Class clz;
+    private Class<?> clz;
     /**
      * 别名
      */

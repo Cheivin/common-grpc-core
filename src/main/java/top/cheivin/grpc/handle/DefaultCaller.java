@@ -11,7 +11,6 @@ import top.cheivin.grpc.util.ProtoBufUtils;
 /**
  * 远程调用器，用于客户端远程调用服务请求结果
  */
-@Slf4j
 public class DefaultCaller implements Caller {
     private int retry;
 
@@ -31,7 +30,7 @@ public class DefaultCaller implements Caller {
     public GrpcResponse call(RemoteInstance remoteInstance, GrpcRequest grpcRequest, int retry) throws InvokeException {
         // 检查channel存活
         if (remoteInstance.isClosed()) {
-            throw new ChannelException("channel is not available");
+            throw new ChannelException("channel is closed", remoteInstance);
         }
         // 获取连接
         CommonServiceGrpc.CommonServiceBlockingStub blockingStub = CommonServiceGrpc
@@ -44,12 +43,10 @@ public class DefaultCaller implements Caller {
             return ProtoBufUtils.deserialize(response.toByteArray(), GrpcResponse.class);
         } catch (Exception e) {
             if (!(e instanceof StatusRuntimeException) && !e.getMessage().contains("DEADLINE_EXCEEDED")) {
-                throw e;
+                throw new InvokeException("error", e, remoteInstance, grpcRequest);
             }
             if (retry <= 0) {
-                log.error("max retry count, server context handle fail,service address:{},serviceName:{},version:{},methodName:{},args:{},error message:{}"
-                        , remoteInstance.getIp() + ":" + remoteInstance.getPort(), grpcRequest.getServiceName(), grpcRequest.getVersion(), grpcRequest.getMethodName(), grpcRequest.getArgs(), "max retry count");
-                throw new InvokeException("max retry count");
+                throw new InvokeException("max retry count", remoteInstance, grpcRequest);
             }
             // 重试
             return call(remoteInstance, grpcRequest, --retry);

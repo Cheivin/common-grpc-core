@@ -1,21 +1,21 @@
 package top.cheivin.grpc.loadbalance;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import top.cheivin.grpc.core.RemoteInstance;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import top.cheivin.grpc.core.RemoteInstance;
 
 /**
  *
  */
 @Slf4j
+@DisplayName("平滑权重轮询负载均衡")
 public class WeightRoundLoadBalancerTest {
     private LoadBalance balance = LoadBalanceFactory.getBalance(3);
 
-    @Before
+    @BeforeEach
     public void init() {
         for (int i = 1; i < 4; i++) {
             balance.addInstance(RemoteInstance.builder()
@@ -30,7 +30,7 @@ public class WeightRoundLoadBalancerTest {
     public void testChoose() {
         for (int i = 0; i < 10; i++) {
             RemoteInstance choose = balance.choose();
-            Assert.assertNotNull(choose);
+            Assertions.assertNotNull(choose);
             log.info("choose:{}", choose);
         }
     }

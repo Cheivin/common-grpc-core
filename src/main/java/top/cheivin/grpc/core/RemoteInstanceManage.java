@@ -7,11 +7,13 @@ import top.cheivin.grpc.loadbalance.LoadBalanceFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Logger;
 
 /**
  * 远程服务提供者实例管理器
  */
 public class RemoteInstanceManage {
+    private static final Logger log = Logger.getLogger(RemoteInstanceManage.class.getName());
     /**
      * 负载均衡类型
      */
@@ -85,6 +87,7 @@ public class RemoteInstanceManage {
     }
 
     public boolean addService(String serviceKey) {
+
         return this.serviceInstanceMap.putIfAbsent(
                 serviceKey,
                 LoadBalanceFactory.getBalance(loadBalanceType)
@@ -113,6 +116,7 @@ public class RemoteInstanceManage {
         Set<String> instanceIds = loadBalance.getIds();
         instanceIds.removeAll(remoteInstanceMap.keySet());
         for (String instanceId : instanceIds) {
+            log.info("remove remote service: " + instanceId);
             loadBalance.removeInstance(instanceId);
         }
         /*
@@ -124,6 +128,7 @@ public class RemoteInstanceManage {
         remoteInstanceMap.keySet().removeAll(loadBalance.getIds());
         for (RemoteInstance instance : remoteInstanceMap.values()) {
             if (loadBalance.addInstance(instance)) {
+                log.info("add remote service: " + instance);
                 instance.connect();
             }
         }

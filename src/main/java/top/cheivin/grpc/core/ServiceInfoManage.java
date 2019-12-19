@@ -41,7 +41,7 @@ public interface ServiceInfoManage {
                 clz = clz.getSuperclass();
             }
             // 父类为顶级类则跳出查找
-        } while (!clz.equals(Object.class));
+        } while (!clz.equals(Object.class) && info == null);
         if (info == null) {
             return false;
         }

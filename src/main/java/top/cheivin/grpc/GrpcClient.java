@@ -1,8 +1,8 @@
 package top.cheivin.grpc;
 
-import lombok.extern.slf4j.Slf4j;
 import top.cheivin.grpc.core.Discover;
 import top.cheivin.grpc.core.GrpcRequest;
+import top.cheivin.grpc.core.GrpcResponse;
 import top.cheivin.grpc.core.RemoteInstance;
 import top.cheivin.grpc.exception.InstanceException;
 import top.cheivin.grpc.exception.InvokeException;
@@ -41,11 +41,11 @@ public class GrpcClient {
         discover.close();
     }
 
-    public final Object invoke(GrpcRequest request) throws InstanceException, InvokeException {
+    public final GrpcResponse invoke(GrpcRequest request) throws InstanceException, InvokeException {
         return invoke(request, retryCount);
     }
 
-    public final Object invoke(GrpcRequest request, int retryCount) throws InstanceException, InvokeException {
+    public final GrpcResponse invoke(GrpcRequest request, int retryCount) throws InstanceException, InvokeException {
         try {
             RemoteInstance remoteInstance = discover.getInstance(request);
             return caller.call(remoteInstance, request);

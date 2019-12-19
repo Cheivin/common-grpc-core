@@ -87,7 +87,6 @@ public class RemoteInstanceManage {
     }
 
     public boolean addService(String serviceKey) {
-
         return this.serviceInstanceMap.putIfAbsent(
                 serviceKey,
                 LoadBalanceFactory.getBalance(loadBalanceType)
@@ -104,6 +103,7 @@ public class RemoteInstanceManage {
     public void refreshInstances(String serviceKey, Map<String, RemoteInstance> remoteInstanceMap) {
         LoadBalance loadBalance = serviceInstanceMap.get(serviceKey);
         if (loadBalance == null) {
+            log.warning("loadBalance is null:" + serviceKey);
             return;
         }
         /*

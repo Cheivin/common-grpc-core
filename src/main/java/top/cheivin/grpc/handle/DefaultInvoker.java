@@ -1,6 +1,5 @@
 package top.cheivin.grpc.handle;
 
-import lombok.extern.slf4j.Slf4j;
 import top.cheivin.grpc.core.GrpcRequest;
 import top.cheivin.grpc.core.GrpcResponse;
 import top.cheivin.grpc.util.ProtoBufUtils;
@@ -12,6 +11,11 @@ import java.lang.reflect.Method;
  * 默认反射调用类，仅支持JAVA
  */
 public class DefaultInvoker implements Invoker {
+
+    @Override
+    public String getDataFormat() {
+        return "BYTES";
+    }
 
     @Override
     public GrpcRequest parseRequest(byte[] request) {

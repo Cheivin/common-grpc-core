@@ -7,15 +7,30 @@ option java_multiple_files = false;
 // 定义通用的 Grpc 服务
 service CommonService {
     // 处理请求
-    rpc handle ( Request ) returns ( Response ) {}
+    rpc handle (Request) returns (Response) {
+    }
 }
 
 // 定义通用的 Grpc 请求体
 message Request {
+    // 请求数据
     bytes request = 1;
+    // 消息id
+    string msgId = 2;
+    // 请求端语言
+    string lang = 3;
+    // 请求数据序列化方式
+    string format = 4;
 }
 
 // 定义通用的 Grpc 响应体
 message Response {
+    // 响应数据
     bytes reponse = 1;
+    // 消息id
+    string msgId = 2;
+    // 响应端使用语言
+    string lang = 3;
+    // 响应数据序列化方式
+    string format = 4;
 }

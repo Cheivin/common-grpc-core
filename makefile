@@ -2,7 +2,7 @@
 
 build:
 	mvn clean protobuf:compile protobuf:compile-custom package
-grpc:
+proto:
 	mvn protobuf:compile protobuf:compile-custom
 clean:
 	mvn clean

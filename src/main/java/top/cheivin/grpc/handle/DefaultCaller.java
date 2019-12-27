@@ -2,10 +2,10 @@ package top.cheivin.grpc.handle;
 
 import com.google.protobuf.ByteString;
 import io.grpc.StatusRuntimeException;
-import lombok.extern.slf4j.Slf4j;
 import top.cheivin.grpc.core.*;
 import top.cheivin.grpc.exception.ChannelException;
 import top.cheivin.grpc.exception.InvokeException;
+import top.cheivin.grpc.util.IdWorker;
 import top.cheivin.grpc.util.ProtoBufUtils;
 
 /**
@@ -20,6 +20,11 @@ public class DefaultCaller implements Caller {
 
     public DefaultCaller(int retry) {
         this.retry = retry;
+    }
+
+    @Override
+    public String getDataFormat() {
+        return "BYTES";
     }
 
     @Override
@@ -38,7 +43,12 @@ public class DefaultCaller implements Caller {
         try {
             // 远程调用
             byte[] bytes = ProtoBufUtils.serialize(grpcRequest);
-            GrpcService.Request request = GrpcService.Request.newBuilder().setRequest(ByteString.copyFrom(bytes)).build();
+            GrpcService.Request request = GrpcService.Request.newBuilder()
+                    .setRequest(ByteString.copyFrom(bytes))
+                    .setMsgId(String.valueOf(IdWorker.next()))
+                    .setLang(LANG)
+                    .setFormat(getDataFormat())
+                    .build();
             ByteString response = blockingStub.handle(request).getReponse();
             return ProtoBufUtils.deserialize(response.toByteArray(), GrpcResponse.class);
         } catch (Exception e) {

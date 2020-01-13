@@ -6,7 +6,7 @@
 
     <groupId>com.github.cheivin</groupId>
     <artifactId>common-grpc-core</artifactId>
-    <version>0.0.2</version>
+    <version>0.1.0</version>
 
     <properties>
         <jdk.version>1.8</jdk.version>

@@ -1,12 +1,15 @@
-package top.cheivin.grpc.handle;
+package top.cheivin.grpc.handle.caller;
 
 import com.google.protobuf.ByteString;
 import io.grpc.StatusRuntimeException;
 import top.cheivin.grpc.core.*;
 import top.cheivin.grpc.exception.ChannelException;
 import top.cheivin.grpc.exception.InvokeException;
+import top.cheivin.grpc.handle.Caller;
+import top.cheivin.grpc.serialize.ProtoBufSerializer;
+import top.cheivin.grpc.serialize.Serializer;
+import top.cheivin.grpc.serialize.SerializerFactory;
 import top.cheivin.grpc.util.IdWorker;
-import top.cheivin.grpc.util.ProtoBufUtils;
 
 /**
  * 远程调用器，用于客户端远程调用服务请求结果
@@ -22,10 +25,7 @@ public class DefaultCaller implements Caller {
         this.retry = retry;
     }
 
-    @Override
-    public String getDataFormat() {
-        return "BYTES";
-    }
+    private Serializer serializer = new ProtoBufSerializer();
 
     @Override
     public GrpcResponse call(RemoteInstance remoteInstance, GrpcRequest grpcRequest) throws InvokeException {
@@ -42,15 +42,18 @@ public class DefaultCaller implements Caller {
                 .newBlockingStub(remoteInstance.getChannel()).withWaitForReady();
         try {
             // 远程调用
-            byte[] bytes = ProtoBufUtils.serialize(grpcRequest);
+            byte[] bytes = serializer.serialize(grpcRequest);
             GrpcService.Request request = GrpcService.Request.newBuilder()
                     .setRequest(ByteString.copyFrom(bytes))
                     .setMsgId(String.valueOf(IdWorker.next()))
                     .setLang(LANG)
-                    .setFormat(getDataFormat())
+                    .setFormat(serializer.getDataFormat())
                     .build();
-            ByteString response = blockingStub.handle(request).getReponse();
-            return ProtoBufUtils.deserialize(response.toByteArray(), GrpcResponse.class);
+            // 获取结果
+            GrpcService.Response response = blockingStub.handle(request);
+            // 获取解析器
+            Serializer respSerializer = SerializerFactory.getSerializer(response.getFormat());
+            return respSerializer.deserialize(response.getReponse().toByteArray(), GrpcResponse.class);
         } catch (Exception e) {
             if (!(e instanceof StatusRuntimeException) && !e.getMessage().contains("DEADLINE_EXCEEDED")) {
                 throw new InvokeException("error", e, remoteInstance, grpcRequest);

@@ -1,4 +1,4 @@
-package top.cheivin.grpc.util;
+package top.cheivin.grpc.serialize;
 
 import io.protostuff.LinkedBuffer;
 import io.protostuff.ProtostuffIOUtil;
@@ -7,16 +7,24 @@ import io.protostuff.runtime.RuntimeSchema;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ProtoBufUtils {
+/**
+ * ProtoBuf序列化
+ *
+ * @author cheivin
+ * @date 2020/1/13
+ */
+public class ProtoBufSerializer implements Serializer {
 
-    // 缓存 schema 对象的 map
+    /**
+     * 缓存 schema 对象的 map
+     */
     private static Map<Class<?>, RuntimeSchema<?>> cachedSchema = new ConcurrentHashMap<>();
 
     /**
      * 根据获取相应类型的schema方法
      */
     @SuppressWarnings({"unchecked"})
-    private static <T> RuntimeSchema<T> getSchema(Class<T> clazz) {
+    private <T> RuntimeSchema<T> getSchema(Class<T> clazz) {
         RuntimeSchema<T> schema = (RuntimeSchema<T>) cachedSchema.get(clazz);
         if (schema == null) {
             schema = RuntimeSchema.createFrom(clazz);
@@ -25,40 +33,25 @@ public class ProtoBufUtils {
         return schema;
     }
 
-    /**
-     * 序列化方法，将对象序列化为字节数组（对象 ---> 字节数组）
-     */
+    @Override
+    public String getDataFormat() {
+        return "JAVABYTES";
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
-    public static <T> byte[] serialize(T obj) {
+    public <T> byte[] serialize(T obj) {
         Class<T> clazz = (Class<T>) obj.getClass();
         RuntimeSchema<T> schema = getSchema(clazz);
         LinkedBuffer buffer = LinkedBuffer.allocate(LinkedBuffer.DEFAULT_BUFFER_SIZE);
         return ProtostuffIOUtil.toByteArray(obj, schema, buffer);
     }
 
-    /**
-     * 反序列化方法，将字节数组反序列化为对象（字节数组 ---> 对象）
-     */
-    public static <T> T deserialize(byte[] data, Class<T> clazz) {
+    @Override
+    public <T> T deserialize(byte[] data, Class<T> clazz) {
         RuntimeSchema<T> schema = RuntimeSchema.createFrom(clazz);
         T message = schema.newMessage();
         ProtostuffIOUtil.mergeFrom(data, message, schema);
         return message;
-    }
-
-
-    /**
-     * 获取对象数组的 Class 类型
-     */
-    public static Class<?>[] getObjTypes(Object[] args) {
-        if (args == null) {
-            return null;
-        }
-        Class<?>[] types = new Class[args.length];
-        for (int i = 0; i < args.length; i++) {
-            Class<?> type = args[i].getClass();
-            types[i] = type;
-        }
-        return types;
     }
 }

@@ -7,7 +7,7 @@ import top.cheivin.grpc.core.RemoteInstance;
 import top.cheivin.grpc.exception.InstanceException;
 import top.cheivin.grpc.exception.InvokeException;
 import top.cheivin.grpc.handle.Caller;
-import top.cheivin.grpc.handle.DefaultCaller;
+import top.cheivin.grpc.handle.caller.DefaultCaller;
 
 /**
  * gRPC客户端

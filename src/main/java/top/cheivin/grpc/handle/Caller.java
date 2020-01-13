@@ -12,13 +12,6 @@ public interface Caller {
     String LANG = "JAVA";
 
     /**
-     * 数据序列化方式
-     *
-     * @return 大写英文字符
-     */
-    String getDataFormat();
-
-    /**
      * 调用远程服务
      *
      * @param remoteInstance 远程实例信息

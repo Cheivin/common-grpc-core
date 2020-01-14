@@ -1,4 +1,6 @@
-package top.cheivin.grpc.serialize;
+package top.cheivin.grpc.handle.serialize;
+
+import top.cheivin.grpc.handle.DataFormat;
 
 /**
  * 序列化器
@@ -13,7 +15,7 @@ public interface Serializer {
      *
      * @return 大写英文字符
      */
-    String getDataFormat();
+    DataFormat getDataFormat();
 
     /**
      * 序列化

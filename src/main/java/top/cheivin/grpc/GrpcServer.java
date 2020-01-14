@@ -1,13 +1,12 @@
 package top.cheivin.grpc;
 
-import top.cheivin.grpc.handle.GrpcHandler;
-import top.cheivin.grpc.core.Registry;
-import top.cheivin.grpc.core.ServiceInfoManage;
-import top.cheivin.grpc.handle.Invoker;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.netty.NettyServerBuilder;
-import lombok.extern.slf4j.Slf4j;
+import top.cheivin.grpc.core.Registry;
+import top.cheivin.grpc.core.ServiceInfoManage;
+import top.cheivin.grpc.handle.GrpcHandler;
+import top.cheivin.grpc.handle.Invoker;
 
 import java.util.concurrent.TimeUnit;
 
@@ -82,6 +81,7 @@ public class GrpcServer {
             return this;
         }
 
+        @Deprecated
         public Builder invoker(Invoker invoker) {
             this.invoker = invoker;
             return this;
@@ -112,7 +112,7 @@ public class GrpcServer {
         }
 
         public GrpcServer build() {
-            GrpcHandler handler = new GrpcHandler(this.invoker, this.grpcServer.serviceInfoManage);
+            GrpcHandler handler = new GrpcHandler(this.grpcServer.serviceInfoManage);
             ServerBuilder serverBuilder = NettyServerBuilder.forPort(this.port)
                     .addService(handler)
                     .keepAliveTime(this.keepAliveTime, TimeUnit.MILLISECONDS)

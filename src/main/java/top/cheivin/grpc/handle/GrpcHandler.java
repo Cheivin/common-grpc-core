@@ -3,36 +3,32 @@ package top.cheivin.grpc.handle;
 import com.google.protobuf.ByteString;
 import io.grpc.stub.StreamObserver;
 import top.cheivin.grpc.core.*;
-import top.cheivin.grpc.handle.invoker.DefaultInvoker;
-import top.cheivin.grpc.serialize.ProtoBufSerializer;
-import top.cheivin.grpc.serialize.Serializer;
-import top.cheivin.grpc.serialize.SerializerFactory;
+import top.cheivin.grpc.handle.invoker.InvokerFactory;
+import top.cheivin.grpc.handle.serialize.Serializer;
+import top.cheivin.grpc.handle.serialize.SerializerFactory;
 
 /**
  * 服务调用器
  */
 public class GrpcHandler extends CommonServiceGrpc.CommonServiceImplBase {
     private static final String LANG = "JAVA";
-    private Invoker invoker;
     private ServiceInfoManage manage;
-    private Serializer serializer = new ProtoBufSerializer();
 
-    public GrpcHandler(Invoker invoker, ServiceInfoManage manage) {
-        if (invoker == null) {
-            this.invoker = new DefaultInvoker();
-        } else {
-            this.invoker = invoker;
-        }
+    public GrpcHandler(ServiceInfoManage manage) {
         this.manage = manage;
     }
 
     @Override
     public void handle(GrpcService.Request gRpcRequest, StreamObserver<GrpcService.Response> observer) {
+        // 数据类型
+        DataFormat dataFormat = DataFormat.valOf(gRpcRequest.getFormat());
         // 根据data类型获取解析器
-        Serializer reqDataSerializer = SerializerFactory.getSerializer(gRpcRequest.getFormat());
+        Serializer serializer = SerializerFactory.getSerializer(dataFormat);
         // 解析请求数据
-        GrpcRequest request = reqDataSerializer.deserialize(gRpcRequest.getRequest().toByteArray(), GrpcRequest.class);
+        GrpcRequest request = serializer.deserialize(gRpcRequest.getRequest().toByteArray(), GrpcRequest.class);
         GrpcResponse response;
+        // 获取调用器
+        Invoker invoker = InvokerFactory.getInvoker(dataFormat);
         // 执行本地反射调用
         try {
             Object instance = manage.getInstance(request);
@@ -51,7 +47,7 @@ public class GrpcHandler extends CommonServiceGrpc.CommonServiceImplBase {
                 .setReponse(bytes)
                 .setMsgId(gRpcRequest.getMsgId())
                 .setLang(LANG)
-                .setFormat(serializer.getDataFormat())
+                .setFormat(serializer.getDataFormat().getVal())
                 .build());
         observer.onCompleted();
     }

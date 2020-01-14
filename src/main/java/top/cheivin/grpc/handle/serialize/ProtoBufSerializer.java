@@ -1,8 +1,9 @@
-package top.cheivin.grpc.serialize;
+package top.cheivin.grpc.handle.serialize;
 
 import io.protostuff.LinkedBuffer;
 import io.protostuff.ProtostuffIOUtil;
 import io.protostuff.runtime.RuntimeSchema;
+import top.cheivin.grpc.handle.DataFormat;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,8 +35,8 @@ public class ProtoBufSerializer implements Serializer {
     }
 
     @Override
-    public String getDataFormat() {
-        return "JAVABYTES";
+    public DataFormat getDataFormat() {
+        return DataFormat.JAVA_BYTES;
     }
 
     @Override

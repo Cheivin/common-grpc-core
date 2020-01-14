@@ -1,13 +1,15 @@
 package top.cheivin.grpc;
 
+import com.google.gson.reflect.TypeToken;
 import top.cheivin.grpc.core.Discover;
 import top.cheivin.grpc.core.GrpcRequest;
-import top.cheivin.grpc.core.GrpcResponse;
 import top.cheivin.grpc.core.RemoteInstance;
 import top.cheivin.grpc.exception.InstanceException;
 import top.cheivin.grpc.exception.InvokeException;
 import top.cheivin.grpc.handle.Caller;
 import top.cheivin.grpc.handle.caller.DefaultCaller;
+
+import java.util.Collection;
 
 /**
  * gRPC客户端
@@ -41,14 +43,18 @@ public class GrpcClient {
         discover.close();
     }
 
-    public final GrpcResponse invoke(GrpcRequest request) throws InstanceException, InvokeException {
-        return invoke(request, retryCount);
+    public final <T> T invoke(GrpcRequest request, Class<T> resClass) throws InvokeException {
+        return invoke(request, resClass, retryCount);
     }
 
-    public final GrpcResponse invoke(GrpcRequest request, int retryCount) throws InstanceException, InvokeException {
+    public final <C extends Collection<T>, T> C invoke(GrpcRequest request, Class<? extends Collection> collectionClass, Class<T> elementClass) throws InvokeException {
+        return invoke(request, collectionClass, elementClass, retryCount);
+    }
+
+    public final <C extends Collection<T>, T> C invoke(GrpcRequest request, Class<? extends Collection> collectionClass, Class<T> elementClass, int retryCount) throws InvokeException {
         try {
             RemoteInstance remoteInstance = discover.getInstance(request);
-            return caller.call(remoteInstance, request);
+            return (C) caller.call(remoteInstance, request, TypeToken.getParameterized(collectionClass, elementClass));
         } catch (InvokeException e) {
             // 仅拦截InvokeException，用于重试
             // 最后一次条用失败则抛出异常
@@ -56,6 +62,20 @@ public class GrpcClient {
                 throw e;
             }
         }
-        return invoke(request, --retryCount);
+        return invoke(request, collectionClass, elementClass, --retryCount);
+    }
+
+    public final <T> T invoke(GrpcRequest request, Class<T> resClass, int retryCount) throws InstanceException, InvokeException {
+        try {
+            RemoteInstance remoteInstance = discover.getInstance(request);
+            return caller.call(remoteInstance, request, TypeToken.get(resClass));
+        } catch (InvokeException e) {
+            // 仅拦截InvokeException，用于重试
+            // 最后一次条用失败则抛出异常
+            if (retryCount <= 1) {
+                throw e;
+            }
+        }
+        return invoke(request, resClass, --retryCount);
     }
 }

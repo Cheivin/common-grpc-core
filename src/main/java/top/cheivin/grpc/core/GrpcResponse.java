@@ -26,6 +26,10 @@ public class GrpcResponse {
      */
     private Object result;
 
+    public boolean isSuccess() {
+        return status == 0;
+    }
+
     public enum Status {
 
         SUCCESS(0), ERROR(-1);

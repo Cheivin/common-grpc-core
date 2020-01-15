@@ -11,7 +11,6 @@ import top.cheivin.grpc.exception.ChannelException;
 import top.cheivin.grpc.exception.InvokeException;
 import top.cheivin.grpc.handle.Caller;
 import top.cheivin.grpc.handle.DataFormat;
-import top.cheivin.grpc.handle.serialize.ProtoBufSerializer;
 import top.cheivin.grpc.handle.serialize.Serializer;
 import top.cheivin.grpc.handle.serialize.SerializerFactory;
 import top.cheivin.grpc.util.IdWorker;
@@ -27,6 +26,9 @@ import java.util.Date;
  * 远程调用器，用于客户端远程调用服务请求结果
  */
 public class DefaultCaller implements Caller {
+    private static final int DEFAULT_RETRY = 1;
+    private static final DataFormat DEFAULT_DATA_FORMAT = DataFormat.JAVA_BYTES;
+
     private Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class, new DateTypeAdapter())
             .registerTypeAdapter(Timestamp.class, new TimestampTypeAdapter())
@@ -34,16 +36,25 @@ public class DefaultCaller implements Caller {
             .create();
 
     private int retry;
+    private Serializer serializer;
 
     public DefaultCaller() {
-        this.retry = 1;
+        this(DEFAULT_RETRY);
     }
 
     public DefaultCaller(int retry) {
-        this.retry = retry;
+        this(retry, DEFAULT_DATA_FORMAT);
     }
 
-    private Serializer serializer = new ProtoBufSerializer();
+    public DefaultCaller(DataFormat dataFormat) {
+        this(DEFAULT_RETRY, dataFormat);
+    }
+
+    public DefaultCaller(int retry, DataFormat dataFormat) {
+        this.retry = retry;
+        this.serializer = SerializerFactory.getSerializer(dataFormat);
+    }
+
 
     @Override
     public <T> T call(RemoteInstance remoteInstance, GrpcRequest request, TypeToken<T> resType) throws InvokeException {
@@ -52,7 +63,7 @@ public class DefaultCaller implements Caller {
 
     public <T> T call(RemoteInstance remoteInstance, GrpcRequest grpcRequest, TypeToken<T> resType, int retry) throws InvokeException {
         CallResp resp = dealCall(remoteInstance, grpcRequest, retry);
-        return parse(resp.dataFormat, resp.response, resType);
+        return parse(resp.dataFormat, resp.response.getResult(), resType);
     }
 
     private CallResp dealCall(RemoteInstance remoteInstance, GrpcRequest grpcRequest, int retry) throws InvokeException {

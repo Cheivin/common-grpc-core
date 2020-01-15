@@ -52,8 +52,8 @@ public class JsonSerializer implements Serializer {
 
         GrpcRequest request = new GrpcRequest();
         request.setServiceName(jsonObj.get("serviceName").getAsString());
-        request.setServiceName(jsonObj.get("version").getAsString());
-        request.setServiceName(jsonObj.get("methodName").getAsString());
+        request.setVersion(jsonObj.get("version").getAsString());
+        request.setMethodName(jsonObj.get("methodName").getAsString());
 
         JsonElement argsElement = jsonObj.get("args");
         if (argsElement == null) {

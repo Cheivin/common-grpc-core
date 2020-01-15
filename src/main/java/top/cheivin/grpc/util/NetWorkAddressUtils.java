@@ -1,5 +1,6 @@
 package top.cheivin.grpc.util;
 
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
@@ -26,10 +27,13 @@ public class NetWorkAddressUtils {
                     if (name.contains("docker")) {
                         continue;
                     }
-                    if (hostAddress.equals("127.0.0.1")) {
+                    if (nextElement.isLoopbackAddress()) {
                         continue;
                     }
-                    if (hostAddress.contains("0:0:0")) {
+                    if (nextElement.isAnyLocalAddress()) {
+                        continue;
+                    }
+                    if (nextElement instanceof Inet6Address) {
                         continue;
                     }
                     return hostAddress;

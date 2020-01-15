@@ -7,8 +7,17 @@ package top.cheivin.grpc.handle;
  * @date 2020/1/14
  */
 public enum DataFormat {
+    /**
+     * ProtoBuf序列化
+     */
     JAVA_BYTES,
+    /**
+     * Json序列化
+     */
     JSON,
+    /**
+     * Xml序列化(暂不支持)
+     */
     XML;
 
 
